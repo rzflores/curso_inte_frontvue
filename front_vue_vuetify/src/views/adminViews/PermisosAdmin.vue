@@ -9,14 +9,14 @@
       <v-list-subheader><h2>Administrador</h2></v-list-subheader>
 
       <v-list-item
-        v-for="(item, i) in MenusAdmin"
+        v-for="(itemMenu, i) in ListaMenusAdmin"
         :key="i"
-        :value="item"
+        :value="itemMenu.Nombre"
         color="primary"
         variant="plain"
       >
         <template v-slot:prepend>
-          <v-checkbox :label="item.text"></v-checkbox>
+          <v-checkbox v-model="itemMenu.EsHabilitado" :label="itemMenu.Nombre"></v-checkbox>
         </template>
       </v-list-item>
     </v-list>
@@ -26,14 +26,14 @@
       <v-list-subheader><h2>Vendedor</h2></v-list-subheader>
 
       <v-list-item
-        v-for="(item, i) in MenusVendedor"
+        v-for="(itemMenu, i) in ListaMenusVendedor"
         :key="i"
-        :value="item"
+        :value="itemMenu"
         color="black"
         variant="plain"
       >
         <template v-slot:prepend>
-          <v-checkbox :label="item.text" color="deep-purple"></v-checkbox>
+          <v-checkbox v-model="itemMenu.EsHabilitado" :label="itemMenu.Nombre" color="deep-purple"></v-checkbox>
         </template>
       </v-list-item>
     </v-list>
@@ -51,8 +51,11 @@
 </v-container>
 </template>
 <script>
+import { mapActions, mapState } from 'vuex'
  export default {
     data: () => ({
+      ListaMenusAdmin : [],
+      ListaMenusVendedor: [],
       MenusAdmin: [
         { text: 'Catalogo Productos' },
         { text: 'Cupones' },
@@ -68,7 +71,22 @@
         { text: 'Ventas' },
       ]
     }),
+    computed:{
+      ...mapState('menurol',['ListaMenuRol'])
+    },
+    methods:{
+      ...mapActions('menurol',['obtenerMenuRol'])
+    },
+    async beforeMount(){
+      await this.obtenerMenuRol(1);
+      this.ListaMenusAdmin = this.ListaMenuRol
+      console.log(this.ListaMenusAdmin)
+      await this.obtenerMenuRol(2);
+      this.ListaMenusVendedor = this.ListaMenuRol
+      console.log(this.ListaMenusAdmin)
+    }
   }
+  
 </script>
 
 <style scoped>

@@ -7,6 +7,7 @@
    <modal-dialog-usuarios 
                   titleDialog="Agregar Usuario" 
                   nameIcon="mdi-plus"
+                  typeAction="A"
                   >
                   </modal-dialog-usuarios>
 
@@ -48,16 +49,16 @@
             </thead>
             <tbody>
             <tr
-                v-for="item in desserts"
-                :key="item.key"
+                v-for="usu in ListaUsuarios"
+                :key="usu.IdUsuario"
             >
-                <td>{{ item.nombres }}</td>
-                <td>{{ item.apellidos }}</td>
-                <td>{{ item.celular }}</td>
-                <td>{{ item.usuario }}</td>
-                <td>{{ item.habilitado }}</td>
-                <td>{{ item.habilitado }}</td>
-                <td>{{ item.habilitado }}</td>
+                <td>{{ usu.Nombres }}</td>
+                <td>{{ usu.Apellidos }}</td>
+                <td>{{ usu.Celular }}</td>
+                <td>{{ usu.NombreUsuario }}</td>
+                <td>{{ usu.EsHabilitado }}</td>
+                <td>{{ usu.Rol.Nombre }}</td>
+                <td>{{ usu.Sucursal.Nombre }}</td>
                 <td> 
                   <v-container> 
                   <v-row>
@@ -65,11 +66,13 @@
                       <modal-dialog-usuarios 
                       titleDialog="Editar Usuario" 
                       nameIcon="mdi-square-edit-outline"
+                       typeAction="E"
+                      :PropIdUsuario="usu.IdUsuario"
                       >
                       </modal-dialog-usuarios>
                     </v-col>
                     <v-col cols="6">
-                      <v-switch label="" inset></v-switch>
+                      <v-switch v-model="usu.EsHabilitado" @click="cambiarEstado(usu.IdUsuario)" label="" inset></v-switch>
                     </v-col>
                   </v-row>
                   </v-container>
@@ -83,6 +86,7 @@
 </template>
 
 <script>
+import { mapActions , mapState } from 'vuex'
 import ModalDialogUsuarios from '../../components/ModalDialogUsuarios.vue'
 export default {
  components : {
@@ -90,29 +94,23 @@ export default {
  }, 
  data () {
       return {      
-        desserts: [
-          {
-            nombres: 'pepito',
-            apellidos: "flores",
-            celular : "998442211",
-            usuario : "user1021",
-            habilitado : true,
-            rol : "Administrador",
-            sucursal : "Almacen",
-          },
-          {
-            nombres: 'test',
-            apellidos: "flores",
-            celular : "998442211",
-            usuario : "user1021",
-            habilitado : false,
-             rol : "Vendedor",
-            sucursal : "Almacen",
-          }
-        ],
       }
     },
+  computed:{
+  ...mapState('usuario',{ ListaUsuarios : 'ListaUsuarios',UsuarioEdit :'UsuarioEdit'})
+ },   
+ methods:{
+   ...mapActions( 'usuario' , ['obtenerUsuarios','obtenerUsuario','editarUsuario']),
+    async cambiarEstado(IdUsuario){
+      await this.obtenerUsuario(IdUsuario)
+      this.UsuarioEdit.EsHabilitado = !this.UsuarioEdit.EsHabilitado;
+      await this.editarUsuario(this.UsuarioEdit)
+    }
+ },   
+ async beforeMount(){
+      await this.obtenerUsuarios()
      
+    }      
 }
 </script>
 

@@ -7,6 +7,7 @@
    <modal-dialog-cupones 
                   titleDialog="Agregar Cupon" 
                   nameIcon="mdi-plus"
+                   typeAction="A"
                   >
                   </modal-dialog-cupones>
   </v-row>
@@ -37,13 +38,13 @@
             </thead>
             <tbody>
             <tr
-                v-for="item in desserts"
-                :key="item.key"
+                v-for="cupon in ListaCupones"
+                :key="cupon.IdCupon"
             >
-                <td>{{ item.codigoCupon }}</td>
-                <td>{{ item.porcentajeDescuento }}</td>
-                <td>{{ item.fechaVencimiento }}</td>
-                <td>{{ item.esHabilitado }}</td>
+                <td>{{ cupon.Codigo }}</td>
+                <td>{{ cupon.PorcentajeDescuento }}</td>
+                <td>{{ cupon.FechaVencimiento }}</td>
+                <td>{{ cupon.EsHabilitado }}</td>
                 <td>
                   <v-container> 
                   <v-row>
@@ -51,11 +52,13 @@
                       <modal-dialog-cupones 
                       titleDialog="Editar Cupon" 
                       nameIcon="mdi-square-edit-outline"
+                      typeAction="E"
+                      :PropIdCupon="cupon.IdCupon"
                       >
                       </modal-dialog-cupones>
                     </v-col>
                     <v-col cols="6">
-                      <v-switch label="" inset></v-switch>
+                      <v-switch  v-model="cupon.EsHabilitado" @click="cambiarEstado(cupon.IdCupon)" label="" inset></v-switch>
                     </v-col>
                   </v-row>
                   </v-container>
@@ -70,29 +73,35 @@
 
 <script>
 import ModalDialogCupones from '../../components/ModalDialogCupones.vue'
+import { mapActions , mapState } from 'vuex'
+
 export default {
  components : {
   ModalDialogCupones
  }, 
  data () {
       return {      
-        desserts: [
-          {
-            codigoCupon: 'XP2-12',
-            porcentajeDescuento: "10.3",
-            fechaVencimiento : "12/10/2023",
-            esHabilitado : true
-          },
-          {
-            codigoCupon: 'XP2-12',
-            porcentajeDescuento: "20.4",
-            fechaVencimiento : "12/10/2023",
-            esHabilitado : false
-          }
-        ],
+       
       }
     },
+  computed:{
+  ...mapState('cupon',{ ListaCupones : 'ListaCupones', CuponEdit :'CuponEdit'})
+ },   
+ methods:{
+   ...mapActions( 'cupon' , ['obtenerCupones','editarCupon','obtenerCupon']),
+  async cambiarEstado(IdCupon){
+    await this.obtenerCupon(IdCupon)
+    this.CuponEdit.EsHabilitado = !this.CuponEdit.EsHabilitado;
+    await this.editarCupon(this.CuponEdit)
+  }
+ },   
+ async beforeMount(){
+      
+      await this.obtenerCupones()
+      
      
+    }   
+        
 }
 </script>
 

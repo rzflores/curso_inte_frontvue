@@ -7,14 +7,14 @@
    <modal-dialog-sucursales 
                   titleDialog="Agregar Sucursal" 
                   nameIcon="mdi-plus"
+                  typeAction="A"
                   >
                   </modal-dialog-sucursales>
   </v-row>
   <v-row class="justify-md-center pt-4">
   <v-table
             fixed-header
-            height="300px"
-
+            height="350px"
         >
             <thead>
             <tr>
@@ -37,17 +37,19 @@
             </thead>
             <tbody>
             <tr
-                v-for="item in desserts"
-                :key="item.key"
+                v-for="sucursal in ListaSucursales"
+                :key="sucursal.IdSucursal"
             >
-                <td>{{ item.nameSucursal }}</td>
-                <td>{{ item.celularSucursal }}</td>
-                <td>{{ item.direccion }}</td>
-                <td>{{ item.referencia }}</td>
+                <td>{{ sucursal.Nombre }}</td>
+                <td>{{ sucursal.CelularSucursal }}</td>
+                <td>{{ sucursal.Direccion }}</td>
+                <td>{{ sucursal.Referencia }}</td>
                 <td> 
                   <modal-dialog-sucursales 
                   titleDialog="Editar Sucursal" 
                   nameIcon="mdi-square-edit-outline"
+                  typeAction="E"
+                  :PropIdSucursal="sucursal.IdSucursal"
                   >
                   </modal-dialog-sucursales>
                 </td>
@@ -61,28 +63,30 @@
 
 <script>
 import ModalDialogSucursales from '../../components/ModalDialogSucursales.vue'
+import { mapActions , mapState } from 'vuex'
+
+
 export default {
  components : {
   ModalDialogSucursales
  }, 
  data () {
       return {      
-        desserts: [
-          {
-            nameSucursal: 'Sucursal 1',
-            celularSucursal: "993449596",
-            direccion : "avenidas 1231",
-            referencia : "dddddddddddddddddddddd"
-          },
-          {
-            nameSucursal: 'Sucursal 2',
-            celularSucursal: "993449596",
-            direccion : "avenidas 1231",
-            referencia : "dddddddddddddddddddddd"
-          }
-        ],
+       
+       
       }
     },
+ computed:{
+  ...mapState('sucursal',{ ListaSucursales : 'ListaSucursales',})
+ },   
+ methods:{
+   ...mapActions( 'sucursal' , ['obtenerSucursales']),
+ 
+ },   
+ async beforeMount(){
+      await this.obtenerSucursales()
+     
+    }   
      
 }
 </script>

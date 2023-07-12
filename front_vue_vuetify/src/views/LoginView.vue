@@ -18,27 +18,27 @@
                 </v-container>
                 <v-card-text>
                 <v-sheet width="300" class="mx-auto">
-                    <v-form fast-fail @submit.prevent @submit="loginUsuario()">
-                    <v-text-field
-                        v-model="firstName"
-                        label="Usuario"
-                        :rules="firstNameRules"
-                    ></v-text-field>
+                    <v-form @submit.prevent @submit="logearUsuario()">
+                        <v-text-field
+                            v-model="usuario.NombreUsuario"
+                            label="Usuario"
+                        ></v-text-field>
 
-                    <v-text-field
-                        v-model="lastName"
-                        label="Contraseña"
-                        :rules="lastNameRules"
-                    ></v-text-field>
+                        <v-text-field
+                            v-model="usuario.Contrasenia"
+                            label="Contraseña"
+                        ></v-text-field>
 
-                    <v-select
-                    label="Sucursales"
-                    :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
-                    :rules="SurcursalesRules"
-                    ></v-select>
+                        <v-select
+                        label="Sucursales"
+                        v-model="usuario.SelectedItem"
+                        :items="SelectSucursales"
+                        item-title="text"
+                        item-value="value"
+                        ></v-select>
 
-                    <v-btn type="submit" 
-                    block class="mt-2">Ingresar</v-btn>
+                        <v-btn type="submit"  
+                        block class="mt-2">Ingresar</v-btn>
                     </v-form>
                  </v-sheet>
                 </v-card-text>
@@ -48,39 +48,53 @@
 </v-container>  
 </template>
 <script>
-export default {
-    data: () => ({
-      firstName: '',
-      usuarioValidate : false,
-      firstNameRules: [
-        value => {
-          if (value?.length > 0){            
-            return true
-          }           
-          return 'Campo Obligatorio.'
-        },
-      ],
-      lastName: '',
-      lastNameRules: [
-        value => {
-           if (value?.length > 0) return true
-          return 'Campo Obligatorio.'
-        },
-      ],
-      sucursales: '',
-      SurcursalesRules: [
-        value => {
-           if (value?.length > 0) return true
-          return 'Campo Obligatorio.'
-        },
-      ],
-    }),
-    methods : {
-        loginUsuario(){
-              this.$router.push('/home')
-        }
+import { mapActions, mapState } from 'vuex'
 
+
+export default {
+    data () {
+      return{
+        usuario : {
+            NombreUsuario : '',
+            Contrasenia : '',
+            SelectedItem : ''
+        },
+        SelectSucursales : [],
+       
+      }
+    } ,
+    methods : {
+        ...mapActions(['loginUsuario']),
+        ...mapActions('sucursal',['obtenerSucursales']),
+
+         async logearUsuario(){             
+             await this.loginUsuario(this.usuario)
+             if(Object.entries(this.UsuarioLogin) == 0)
+             {
+                this.$router.push('/')
+             }else{
+                 if( this.UsuarioLogin.Rol.IdRol == 1 ){
+                    
+                    this.$router.push('/homeAdmin')
+                 }else{
+                    this.$router.push('/home')
+                 }   
+             }
+         },
+        
+    },
+    computed: {
+        ...mapState({ UsuarioLogin : 'Usuario'}),
+        ...mapState( 'sucursal', ['ListaSucursales'])    
+    },
+    async beforeMount(){
+       await this.obtenerSucursales()
+       this.SelectSucursales = this.ListaSucursales.map( e => 
+                    ({ text : e.Nombre , value: e.IdSucursal })
+       )
     }
+
+    
 }
 </script>
 <style scoped>

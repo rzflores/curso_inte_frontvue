@@ -7,6 +7,7 @@
    <modal-dialog-productos 
                   titleDialog="Agregar Producto" 
                   nameIcon="mdi-plus"
+                  typeAction="A"
                   >
                   </modal-dialog-productos>
 
@@ -23,9 +24,7 @@
                 <th class="text-left">
                     Nombre Producto
                 </th>
-                <th class="text-left">
-                    Descripcion Producto
-                </th>
+                
                 <th class="text-left">
                     Precio Unitario
                 </th>
@@ -39,25 +38,30 @@
                     Stock
                 </th>
                 <th class="text-left">
+                    Fecha Vencimiento
+                </th>
+                <th class="text-left">
                     Acciones
                 </th>
             </tr>
             </thead>
             <tbody>
             <tr
-                v-for="item in desserts"
-                :key="item.key"
+                v-for="producto in ListaProductos"
+                :key="producto.IdProducto"
             >
-                <td>{{ item.nameProducto }}</td>
-                <td>{{ item.descripcionLarga }}</td>
-                <td>{{ item.precioUnitario }}</td>
-                <td>{{ item.unidadMedida }}</td>
-                <td>{{ item.categoria }}</td>
-                <td>{{ item.stock }}</td>
+                <td>{{ producto.NombreProducto }}</td>
+                <td>{{ producto.PrecioUnitario }}</td>
+                <td>{{ producto.UnidadMedida.Numero + ' ' + producto.UnidadMedida.NombreGramajeCorto }}</td>
+                <td>{{ producto.Categoria.Nombre }}</td>
+                <td>{{ producto.StockActual }}</td>
+                <td>{{ producto.FechaVencimiento }}</td>
                 <td> 
                   <modal-dialog-productos 
                   titleDialog="Editar Producto" 
                   nameIcon="mdi-square-edit-outline"
+                  typeAction="E"
+                  :PropIdProducto="producto.IdProducto"
                   >
                   </modal-dialog-productos>
                 </td>
@@ -71,32 +75,24 @@
 
 <script>
 import ModalDialogProductos from '../../components/ModalDialogProductos.vue'
+import { mapActions , mapState } from 'vuex'
 export default {
  components : {
   ModalDialogProductos
  }, 
  data () {
       return {      
-        desserts: [
-          {
-            nameProducto: 'Frozen Yogurt',
-            descripcionLarga: "descripcion larga",
-            precioUnitario : 20.2,
-            unidadMedida : "1 kg",
-            categoria : "Suero leche",
-            stock : 2
-          },
-          {
-            nameProducto: 'Ice cream sandwich',
-            descripcionLarga: "descripcion larga",
-            precioUnitario : 20.2,
-            unidadMedida : "1 kg",
-            categoria : "Suero leche",
-            stock : 2
-          }
-        ],
       }
     },
+  computed:{
+  ...mapState('producto',{ ListaProductos : 'ListaProductos'})
+ },   
+ methods:{
+  ...mapActions( 'producto' , ['obtenerProductos']),
+ },   
+ async beforeMount(){
+      await this.obtenerProductos()
+    }   
      
 }
 </script>

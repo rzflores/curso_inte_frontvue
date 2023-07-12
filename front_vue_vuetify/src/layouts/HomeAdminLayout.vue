@@ -7,11 +7,11 @@
       >
         <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-        <v-toolbar-title>Vuetify</v-toolbar-title>
+        <v-toolbar-title>Bienvenido {{ LoginUsuario.Nombres }}</v-toolbar-title>
 
         <v-spacer></v-spacer>
 
-        <v-btn icon>
+        <v-btn @click="logout()" icon>
           <v-icon>mdi-export</v-icon>
         </v-btn>
   </v-toolbar>
@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   components :{
   },
@@ -57,6 +58,17 @@ export default {
        drawer : false
     }
 
+  },
+  computed:{
+    ...mapState({
+      LoginUsuario : 'Usuario'
+    })
+  },
+  methods:{
+    logout(){
+       this.LoginUsuario = {};
+       this.$router.push('/')
+    }
   }
 }
 </script>
