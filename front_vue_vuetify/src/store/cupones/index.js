@@ -4,7 +4,8 @@ const CuponStore = {
     namespaced: true,
     state : () => ({
         ListaCupones : [],
-        CuponEdit: {}
+        CuponEdit: {},
+        MensajeErrorCupon : "", 
     }),
     actions : {       
         async obtenerCupones({ commit , rootState }){
@@ -92,6 +93,29 @@ const CuponStore = {
           } catch (error) {
             console.log(error.response);
           }
+        },
+        async verificarCupon({ commit ,  rootState },codigoCupon){
+          try {
+            const headers = {
+              'Content-Type': 'application/json',
+              'token': rootState.Usuario.Token
+            };
+            const response = await axios.post(
+              "http://localhost:4000/cupon/verificarCupon"
+            ,{
+              CodigoCupon : codigoCupon
+            },{
+              headers
+            });
+            console.log(response.data.data)
+            commit("OBTENER_CUPON", response.data.data);
+          } catch (error) {
+            console.log(error.response);
+            commit("MENSAJE" , error.response.data.mensaje)
+          }
+        },
+        async limpiarMsgError({commit}){
+          commit("LIMPIAR_MSGERROR")
         }
     },
     mutations : {
@@ -100,6 +124,12 @@ const CuponStore = {
         },
         OBTENER_CUPON(state,data){
           state.CuponEdit = data
+        },
+        MENSAJE(state,data){
+          state.MensajeErrorCupon = data
+        },
+        LIMPIAR_MSGERROR(state){
+          state.MensajeErrorCupon = ""
         }
       },
 }

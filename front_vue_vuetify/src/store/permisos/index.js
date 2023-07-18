@@ -1,96 +1,68 @@
 import axios from "axios"
+import MenuStore  from '../menus/index'
 
 const PermisoStore = {
     namespaced: true,
     state : () => ({
-   
+      exitoCambioAdmin : false,
+      exitoCambioVendedor : false
     }),
     actions : {       
-        async obtenerSucursales({ commit }){
-          try {
-            const response = await axios.post(
-              "http://localhost:4000/sucursal/obtenerSucursales"
-            );
-            commit("OBTENER_SUCURSALES", response.data.data);
-          } catch (error) {
-            console.log(error.response);
-          }
-        },
-        async obtenerSucursal({ commit ,  rootState },IdSucursal){
+        async EditarCambioMenuEstAdmin({ commit , rootState  },DatosCambioMenuEstAdmin){
           try {
             const headers = {
               'Content-Type': 'application/json',
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              "http://localhost:4000/sucursal/obtenerSucursal"
+              "http://localhost:4000/menu/cambiarEstadoMenus"
             ,{
-              idSucursal : IdSucursal
+              IdRol : DatosCambioMenuEstAdmin.idRol,
+              ListaMenus : DatosCambioMenuEstAdmin.listaCambioMenuEstAdmin
             },{
               headers
             });
-            console.log(response.data.data)
-            commit("OBTENER_SUCURSAL", response.data.data);
+            //console.log(response.data.data)
+            if(response.data.data == true){
+              commit("CAMBIAR_ESTADO_ADMIN")
+              await MenuStore.dispatch('obtenerMenuRol',2)
+
+            }
           } catch (error) {
             console.log(error.response);
           }
         },
-        async registrarSucursal({ dispatch, rootState},sucursal){
+        async EditarCambioMenuEstVendedor({ commit , rootState },DatosCambioMenuEstVendedor){
           try {
             const headers = {
               'Content-Type': 'application/json',
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              "http://localhost:4000/sucursal/registrarSucursal",
-              { 
-                Nombre: sucursal.Nombre,
-                CelularSucursal: sucursal.CelularSucursal,
-                Direccion: sucursal.Direccion,
-                Referencia: sucursal.Referencia
-              },{
-                headers
-              }
-            );
-            console.log(response.data.data)
-            dispatch('obtenerSucursales')
+              "http://localhost:4000/menu/cambiarEstadoMenus"
+            ,{
+              IdRol : DatosCambioMenuEstVendedor.idRol,
+              ListaMenus : DatosCambioMenuEstVendedor.listaCambioMenuEstVendedor
+            },{
+              headers
+            });
+            if(response.data.data === true){
+              commit("CAMBIAR_ESTADO_VENDEDOR")
+              await MenuStore.dispatch('obtenerMenuRol',1)
+            }
           } catch (error) {
             console.log(error.response);
           }
         },
-        async editarSucursal({ dispatch, rootState},sucursal){
-          try {
-            const headers = {
-              'Content-Type': 'application/json',
-              'token': rootState.Usuario.Token
-            };
-            const response = await axios.post(
-              "http://localhost:4000/sucursal/editarSurcursal",
-              { 
-                IdSucursal : sucursal.IdSucursal,
-                Nombre: sucursal.Nombre,
-                CelularSucursal: sucursal.CelularSucursal,
-                Direccion: sucursal.Direccion,
-                Referencia: sucursal.Referencia
-              },{
-                headers
-              }
-            );
-            console.log(response.data.data)
-            dispatch('obtenerSucursales')
-          } catch (error) {
-            console.log(error.response);
-          }
-        }
     },
     mutations : {
-        OBTENER_SUCURSALES(state , data){
-          state.ListaSucursales = data
-        },
-        OBTENER_SUCURSAL(state,data){
-          state.SucursalEdit = data
-        }
+      CAMBIAR_ESTADO_ADMIN(state){
+        state.exitoCambioAdmin = true;
       },
+      CAMBIAR_ESTADO_VENDEDOR(state){
+        state.exitoCambioVendedor = true;
+      }
+    },
 }
 
 export default PermisoStore;

@@ -3,92 +3,63 @@ import axios from "axios"
 const ReporteStore = {
     namespaced: true,
     state : () => ({
-   
+      ListaReporteStock : [],
+      ListaReporteVencimiento : []
     }),
     actions : {       
-        async obtenerSucursales({ commit }){
-          try {
-            const response = await axios.post(
-              "http://localhost:4000/sucursal/obtenerSucursales"
-            );
-            commit("OBTENER_SUCURSALES", response.data.data);
-          } catch (error) {
-            console.log(error.response);
-          }
-        },
-        async obtenerSucursal({ commit ,  rootState },IdSucursal){
+        async realizarReporteStock({ commit , rootState } , filtroStock ){
           try {
             const headers = {
               'Content-Type': 'application/json',
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              "http://localhost:4000/sucursal/obtenerSucursal"
+              "http://localhost:4000/reporte/obtenerReporteStock"
+              ,{
+                Nombre : filtroStock.Nombre,
+                Descripcion : filtroStock.Descripcion,
+                IdCategoria : filtroStock.IdCategoria
+              },{
+                headers
+              });
+              console.log(response.data.data)
+            commit("OBTENER_REPORTE_STOCK", response.data.data);
+          } catch (error) {
+            console.log(error.response);
+          }
+        },
+        async realizarReporteVencimiento({ commit ,  rootState },filtroVencimiento){
+          try {
+            const headers = {
+              'Content-Type': 'application/json',
+              'token': rootState.Usuario.Token
+            };
+            const response = await axios.post(
+              "http://localhost:4000/reporte/obtenerReporteVencimiento"
             ,{
-              idSucursal : IdSucursal
+              Nombre : filtroVencimiento.Nombre,
+              Descripcion: filtroVencimiento.Descripcion,
+              IdCategoria: filtroVencimiento.IdCategoria,
+              FechaInicio : filtroVencimiento.FechaInicio,
+              FechaFin : filtroVencimiento.FechaFin
             },{
               headers
             });
             console.log(response.data.data)
-            commit("OBTENER_SUCURSAL", response.data.data);
+            commit("OBTENER_REPORTE_VECIMIENTO", response.data.data);
           } catch (error) {
             console.log(error.response);
           }
         },
-        async registrarSucursal({ dispatch, rootState},sucursal){
-          try {
-            const headers = {
-              'Content-Type': 'application/json',
-              'token': rootState.Usuario.Token
-            };
-            const response = await axios.post(
-              "http://localhost:4000/sucursal/registrarSucursal",
-              { 
-                Nombre: sucursal.Nombre,
-                CelularSucursal: sucursal.CelularSucursal,
-                Direccion: sucursal.Direccion,
-                Referencia: sucursal.Referencia
-              },{
-                headers
-              }
-            );
-            console.log(response.data.data)
-            dispatch('obtenerSucursales')
-          } catch (error) {
-            console.log(error.response);
-          }
-        },
-        async editarSucursal({ dispatch, rootState},sucursal){
-          try {
-            const headers = {
-              'Content-Type': 'application/json',
-              'token': rootState.Usuario.Token
-            };
-            const response = await axios.post(
-              "http://localhost:4000/sucursal/editarSurcursal",
-              { 
-                IdSucursal : sucursal.IdSucursal,
-                Nombre: sucursal.Nombre,
-                CelularSucursal: sucursal.CelularSucursal,
-                Direccion: sucursal.Direccion,
-                Referencia: sucursal.Referencia
-              },{
-                headers
-              }
-            );
-            console.log(response.data.data)
-            dispatch('obtenerSucursales')
-          } catch (error) {
-            console.log(error.response);
-          }
-        }
+       
+     
     },
     mutations : {
-        OBTENER_SUCURSALES(state , data){
-          state.ListaSucursales = data
+        OBTENER_REPORTE_STOCK(state , data){
+          state.ListaReporteStock = data
         },
-        OBTENER_SUCURSAL(state,data){
-          state.SucursalEdit = data
+        OBTENER_REPORTE_VECIMIENTO(state,data){
+          state.ListaReporteVencimiento = data
         }
       },
 }

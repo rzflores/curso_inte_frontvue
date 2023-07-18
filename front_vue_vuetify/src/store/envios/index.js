@@ -3,93 +3,52 @@ import axios from "axios"
 const EnvioStore = {
     namespaced: true,
     state : () => ({
-   
+      guiaGuardada : null
     }),
     actions : {       
-        async obtenerSucursales({ commit }){
-          try {
-            const response = await axios.post(
-              "http://localhost:4000/sucursal/obtenerSucursales"
-            );
-            commit("OBTENER_SUCURSALES", response.data.data);
-          } catch (error) {
-            console.log(error.response);
-          }
-        },
-        async obtenerSucursal({ commit ,  rootState },IdSucursal){
+        async enviarProductos({ commit , rootState } , datosEnvio){
           try {
             const headers = {
               'Content-Type': 'application/json',
               'token': rootState.Usuario.Token
             };
+
             const response = await axios.post(
-              "http://localhost:4000/sucursal/obtenerSucursal"
-            ,{
-              idSucursal : IdSucursal
-            },{
-              headers
-            });
-            console.log(response.data.data)
-            commit("OBTENER_SUCURSAL", response.data.data);
-          } catch (error) {
-            console.log(error.response);
-          }
-        },
-        async registrarSucursal({ dispatch, rootState},sucursal){
-          try {
-            const headers = {
-              'Content-Type': 'application/json',
-              'token': rootState.Usuario.Token
-            };
-            const response = await axios.post(
-              "http://localhost:4000/sucursal/registrarSucursal",
-              { 
-                Nombre: sucursal.Nombre,
-                CelularSucursal: sucursal.CelularSucursal,
-                Direccion: sucursal.Direccion,
-                Referencia: sucursal.Referencia
+              "http://localhost:4000/envio/realizarEnvio"
+              ,{
+                FechaSalida: datosEnvio.fechaSalida,
+                FechaLlegada: datosEnvio.fechaLlegada,
+                NombreConductor: datosEnvio.nombreConductor,
+                CelularConductor: datosEnvio.celularConductor,
+                PlacaVehiculo: datosEnvio.placaVehiculo,
+                IdUsuario: datosEnvio.idUsuario,
+                IdSucursalOrigen: datosEnvio.idSucursalOrigen,
+                IdSucursalDestino: datosEnvio.idSucursalDestino,
+                ListaDetalleEnvio: datosEnvio.listaDetalleEnvio
               },{
                 headers
-              }
-            );
-            console.log(response.data.data)
-            dispatch('obtenerSucursales')
+              });
+            console.log(response.data.data)  
+            commit("REGISTRAR_ENVIO", response.data.data);
           } catch (error) {
             console.log(error.response);
           }
         },
-        async editarSucursal({ dispatch, rootState},sucursal){
-          try {
-            const headers = {
-              'Content-Type': 'application/json',
-              'token': rootState.Usuario.Token
-            };
-            const response = await axios.post(
-              "http://localhost:4000/sucursal/editarSurcursal",
-              { 
-                IdSucursal : sucursal.IdSucursal,
-                Nombre: sucursal.Nombre,
-                CelularSucursal: sucursal.CelularSucursal,
-                Direccion: sucursal.Direccion,
-                Referencia: sucursal.Referencia
-              },{
-                headers
-              }
-            );
-            console.log(response.data.data)
-            dispatch('obtenerSucursales')
-          } catch (error) {
-            console.log(error.response);
-          }
+        async limpiarEstadoGuia({ commit }){
+          commit("LIMPIAR_ESTADO_GUIA")
         }
+        
+        
+        
     },
     mutations : {
-        OBTENER_SUCURSALES(state , data){
-          state.ListaSucursales = data
+        REGISTRAR_ENVIO(state , data){
+          state.guiaGuardada = data
         },
-        OBTENER_SUCURSAL(state,data){
-          state.SucursalEdit = data
+        LIMPIAR_ESTADO_GUIA(state){
+          state.guiaGuardada = null
         }
+        
       },
 }
 

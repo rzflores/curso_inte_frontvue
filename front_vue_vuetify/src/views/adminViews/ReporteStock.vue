@@ -7,34 +7,46 @@
     <v-col cols="3">
        <v-text-field
                   label="Nombre*"
+                  v-model="filtroStock.Nombre"
                   required
                 ></v-text-field>
     </v-col>
      <v-col cols="3">
        <v-text-field
-                  label="Codigo*"
+                  label="Descripcion*"
+                  v-model="filtroStock.Descripcion"
                   required
                 ></v-text-field>
     </v-col>
      <v-col cols="3">
          <v-select
                   label="Categoria"
-                  :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
+                  :items="SelectCategorias"
+                  item-title="text"
+                  item-value="value"
+                  v-model="filtroStock.IdCategoria"
                   required
                 ></v-select>
     </v-col>
      <v-col cols="3">
          <v-btn  type="submit" 
                     color="deep-purple"
-                    block class=" mt-2">Buscar</v-btn>    
+                    @click="obtenerReporteStock()"
+                    block class=" mt-2">Buscar</v-btn> 
+           <v-btn  type="submit" 
+                    color="deep-purple"
+                    @click="exportarExcel()"
+                    block class=" mt-2">Exportar</v-btn>                 
     </v-col>
   </v-row>
   <v-row>
   <v-data-table
+      id="tableStock"
       v-model:sort-by="sortBy"
       :headers="headers"
       :items="desserts"
       class="elevation-1"
+      no-data-text="Sin resultados"
     ></v-data-table>
   </v-row>  
   </v-container>
@@ -42,112 +54,71 @@
 
 <script>
   import { VDataTable } from 'vuetify/labs/VDataTable'
+  import { mapActions, mapState } from 'vuex'
+  import * as XLSX from 'xlsx/xlsx.mjs';
   export default {
     components : {
       VDataTable
     },
     data () {
       return {
+        SelectCategorias : [],
+        filtroStock : {
+          Nombre : "",
+          Descripcion : "",
+          IdCategoria : null
+        },
         sortBy: [
             { key: '', order: '' }
           ],
         headers: [
-          {
-            title: 'Dessert (100g serving)',
-            align: 'start',
-            sortable: false,
-            key: 'name',
-          },
-          { title: 'Calories', key: 'calories' },
-          { title: 'Fat (g)', key: 'fat' },
-          { title: 'Carbs (g)', key: 'carbs' },
-          { title: 'Protein (g)', key: 'protein' },
-          { title: 'Iron (%)', key: 'iron' },
+          { title: 'Nombre',key: 'nombre',},
+          { title: 'Descripcion', key: 'descripcion' },
+          { title: 'Categoria', key: 'categoria' },
+          { title: 'Stock', key: 'stock' },
+          { title: 'Sucursal', key: 'sucursal' },
         ],
-        desserts: [
-          {
-            name: 'Frozen Yogurt',
-            calories: 200,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-            iron: '1%',
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 200,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-            iron: '1%',
-          },
-          {
-            name: 'Eclair',
-            calories: 300,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-            iron: '7%',
-          },
-          {
-            name: 'Cupcake',
-            calories: 300,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-            iron: '8%',
-          },
-          {
-            name: 'Gingerbread',
-            calories: 400,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-            iron: '16%',
-          },
-          {
-            name: 'Jelly bean',
-            calories: 400,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-            iron: '0%',
-          },
-          {
-            name: 'Lollipop',
-            calories: 400,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-            iron: '2%',
-          },
-          {
-            name: 'Honeycomb',
-            calories: 400,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-            iron: '45%',
-          },
-          {
-            name: 'Donut',
-            calories: 500,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
-            iron: '22%',
-          },
-          {
-            name: 'KitKat',
-            calories: 500,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            iron: '6%',
-          },
-        ],
+        desserts: [],
       }
     },
+    computed:{
+       ...mapState('categoria',['ListaCategorias' ]),
+       ...mapState('reporte',['ListaReporteStock' ]),
+    },
+    methods:{
+      ...mapActions('categoria',['obtenerCategorias']),
+      ...mapActions('reporte',['realizarReporteStock']),
+      async obtenerReporteStock(){
+        this.desserts = [];
+        if(this.filtroStock.IdCategoria == 1){ this.filtroStock.IdCategoria = null  }
+        await this.realizarReporteStock(this.filtroStock);
+        this.ListaReporteStock.forEach(item => {
+          let itemReporteStock = {
+            nombre : item.nombreProducto,
+            descripcion: item.descripcionProducto,
+            categoria : item.nombreCategoria,
+            stock: item.stockProducto,
+            sucursal: item.nombreSucursal
+          }
+
+          this.desserts.push(itemReporteStock)
+        });
+      },
+      async exportarExcel(){
+        let table_stock = document.getElementById("tableStock");
+        var workbook = XLSX.utils.table_to_book(table_stock);
+        var ws = workbook.Sheets["Reporte"];
+        XLSX.utils.sheet_add_aoa(ws, [["Created "+new Date().toISOString()]], {origin:-1});
+        XLSX.writeFile(workbook, "ReporteStock.xlsb");
+
+      }
+    },
+    async beforeMount(){
+       await this.obtenerCategorias();
+      this.SelectCategorias = this.ListaCategorias.map( e => 
+                    ({ text : e.Nombre , value: e.IdCategoria })
+       )
+    }
   }
 </script>
 

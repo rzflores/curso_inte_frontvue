@@ -7,11 +7,11 @@
       >
         <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-        <v-toolbar-title>Vuetify</v-toolbar-title>
+        <v-toolbar-title>Bienvenido {{ LoginUsuario.Nombres }}</v-toolbar-title>
 
         <v-spacer></v-spacer>
 
-        <v-btn icon>
+          <v-btn @click="logout()" icon>
           <v-icon>mdi-export</v-icon>
         </v-btn>
   </v-toolbar>
@@ -24,13 +24,18 @@
         temporary
       >
      <v-list color="transparent">
-        <router-link to="/home/catalogo"><v-list-item prepend-icon="mdi-view-dashboard" title="Catalogo"></v-list-item></router-link>       
-        <router-link to="/home/ventas"><v-list-item prepend-icon="mdi-view-dashboard" title="Ventas"></v-list-item></router-link>       
-        </v-list>
+        <router-link  v-for="item in this.ListaMenuRol"  :to="item.Link" :key="item.IdMenu">
+          <v-list-item prepend-icon="mdi-view-dashboard" :title="item.Nombre"></v-list-item>
+        </router-link>
+
+
+        <!-- <router-link to="/home/catalogo"><v-list-item prepend-icon="mdi-view-dashboard" title="Catalogo"></v-list-item></router-link>       
+        <router-link to="/home/ventas"><v-list-item prepend-icon="mdi-view-dashboard" title="Ventas"></v-list-item></router-link>        -->
+      </v-list>
         <template v-slot:append>
           <div class="pa-2">
-            <v-btn block>
-              Logout
+            <v-btn @click="logout()" block>
+              Salir
             </v-btn>
           </div>
         </template>
@@ -43,6 +48,7 @@
 </template>
 
 <script>
+import { mapActions , mapState } from 'vuex'
 export default {
   components :{
   },
@@ -51,6 +57,24 @@ export default {
        drawer : false
     }
 
+  },
+  computed:{
+    ...mapState({
+      LoginUsuario : 'Usuario'
+    }),
+    ...mapState('menurol',['ListaMenuRol']),
+  },
+  methods:{
+     ...mapActions(['logoutUsuario']),
+     ...mapActions('menurol',['obtenerMenuRolFiltrado']),
+      async logout()  {
+       await this.logoutUsuario()
+       console.log(this.LoginUsuario)
+       this.$router.push('/')
+    }
+  },
+  async beforeMount(){
+      await this.obtenerMenuRolFiltrado(1);
   }
 }
 </script>

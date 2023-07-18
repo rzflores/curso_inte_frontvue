@@ -7,52 +7,52 @@
     <v-col cols="4">
        <v-text-field
                   label="Nombre*"
+                  v-model="filtroVencimiento.Nombre"
                   required
                 ></v-text-field>
     </v-col>
      <v-col cols="4">
        <v-text-field
-                  label="Codigo*"
+                  label="Descripcion*"
+                  v-model="filtroVencimiento.Descripcion"
                   required
                 ></v-text-field>
     </v-col>
      <v-col cols="4">
          <v-select
                   label="Categoria"
-                  :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
+                  :items="SelectCategorias"
+                  item-title="text"
+                  item-value="value"
+                  v-model="filtroVencimiento.IdCategoria"
                   required
                 ></v-select>
     </v-col>
      <v-col cols="4">
-            <v-date-picker class="pt-2"
-                           title="" 
-                           input-text="Fecha Inicio" 
-                           hide-actions="false"  
-                           header="Fecha Inicio:"
-                           input-mode="keyboard"
-                           ></v-date-picker>      
+              <v-text-field v-model="filtroVencimiento.FechaInicio" type="date" label="Fecha Inicio"></v-text-field>
       </v-col>          
       <v-col cols="4">
-            <v-date-picker class="pt-2"
-                           title="" 
-                           input-text="Fecha Fin" 
-                           hide-actions="false"  
-                           header="Fecha Fin:"
-                           input-mode="keyboard"
-                           ></v-date-picker>      
+              <v-text-field v-model="filtroVencimiento.FechaFin" type="date" label="Fecha Fin"></v-text-field>
         </v-col>        
     <v-col cols="4">
-         <v-btn  type="submit" 
+          <v-btn  type="submit" 
                     color="deep-purple"
-                    block class=" mt-2">Buscar</v-btn>    
+                    @click="obtenerReporteVencimiento()"
+                    block class=" mt-2">Buscar</v-btn> 
+           <v-btn  type="submit" 
+                    color="deep-purple"
+                    @click="exportarExcel()"
+                    block class=" mt-2">Exportar</v-btn>
     </v-col>
   </v-row>
   <v-row>
   <v-data-table
+      id="tableVencimiento"
       v-model:sort-by="sortBy"
       :headers="headers"
       :items="desserts"
       class="elevation-1"
+      no-data-text="Sin resultados"
     ></v-data-table>
   </v-row>  
   </v-container>
@@ -60,114 +60,74 @@
 
 <script>
   import { VDataTable } from 'vuetify/labs/VDataTable'
-  import { VDatePicker } from 'vuetify/labs/VDatePicker'
+  import { mapActions, mapState } from 'vuex'
+  import * as XLSX from 'xlsx/xlsx.mjs';
   export default {
     components : {
       VDataTable,
-      VDatePicker
     },
     data () {
       return {
+        SelectCategorias : [],
+        filtroVencimiento : {
+          Nombre : "",
+          Descripcion : "",
+          IdCategoria : null,
+          FechaInicio : new Date().toISOString().substr(0, 10),
+          FechaFin : new Date().toISOString().substr(0, 10)
+        },
         sortBy: [
             { key: '', order: '' }
           ],
-        headers: [
-          {
-            title: 'Dessert (100g serving)',
-            align: 'start',
-            sortable: false,
-            key: 'name',
-          },
-          { title: 'Calories', key: 'calories' },
-          { title: 'Fat (g)', key: 'fat' },
-          { title: 'Carbs (g)', key: 'carbs' },
-          { title: 'Protein (g)', key: 'protein' },
-          { title: 'Iron (%)', key: 'iron' },
+         headers: [
+          { title: 'Nombre',key: 'nombre',},
+          { title: 'Descripcion', key: 'descripcion' },
+          { title: 'Categoria', key: 'categoria' },
+          { title: 'Fecha Vencimiento', key: 'fechaVencimiento' },
+          { title: 'Sucursal', key: 'sucursal' },
         ],
-        desserts: [
-          {
-            name: 'Frozen Yogurt',
-            calories: 200,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-            iron: '1%',
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 200,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-            iron: '1%',
-          },
-          {
-            name: 'Eclair',
-            calories: 300,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-            iron: '7%',
-          },
-          {
-            name: 'Cupcake',
-            calories: 300,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-            iron: '8%',
-          },
-          {
-            name: 'Gingerbread',
-            calories: 400,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-            iron: '16%',
-          },
-          {
-            name: 'Jelly bean',
-            calories: 400,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-            iron: '0%',
-          },
-          {
-            name: 'Lollipop',
-            calories: 400,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-            iron: '2%',
-          },
-          {
-            name: 'Honeycomb',
-            calories: 400,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-            iron: '45%',
-          },
-          {
-            name: 'Donut',
-            calories: 500,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
-            iron: '22%',
-          },
-          {
-            name: 'KitKat',
-            calories: 500,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            iron: '6%',
-          },
-        ],
+        desserts: [],
       }
     },
+    computed:{
+       ...mapState('categoria',['ListaCategorias' ]),
+       ...mapState('reporte',['ListaReporteVencimiento' ]),
+    },
+    methods:{
+      ...mapActions('categoria',['obtenerCategorias']),
+      ...mapActions('reporte',['realizarReporteVencimiento']),
+      async obtenerReporteVencimiento(){
+        this.desserts = [];
+        if(this.filtroVencimiento.IdCategoria == 1){ this.filtroVencimiento.IdCategoria = null  }
+        console.log(this.filtroVencimiento)
+        await this.realizarReporteVencimiento(this.filtroVencimiento);
+        this.ListaReporteVencimiento.forEach(item => {
+          let itemReporteVencimiento = {
+            nombre : item.nombreProducto,
+            descripcion: item.descripcionProducto,
+            categoria : item.nombreCategoria,
+            fechaVencimiento: item.fechaVencimiento,
+            sucursal: item.nombreSucursal
+          }
+
+          this.desserts.push(itemReporteVencimiento)
+        });
+      },
+      async exportarExcel(){
+        let table_stock = document.getElementById("tableVencimiento");
+        var workbook = XLSX.utils.table_to_book(table_stock);
+        var ws = workbook.Sheets["Reporte"];
+        XLSX.utils.sheet_add_aoa(ws, [["Created "+new Date().toISOString()]], {origin:-1});
+        XLSX.writeFile(workbook, "ReporteVencimiento.xlsb");
+
+      }
+    },
+    async beforeMount(){
+       await this.obtenerCategorias();
+      this.SelectCategorias = this.ListaCategorias.map( e => 
+                    ({ text : e.Nombre , value: e.IdCategoria })
+       )
+    }
   }
 </script>
 

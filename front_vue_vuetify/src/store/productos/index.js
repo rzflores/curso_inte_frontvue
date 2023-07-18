@@ -109,7 +109,31 @@ const ProductoStore = {
           } catch (error) {
             console.log(error.response);
           }
-        }
+        },
+        async obtenerProductosLike({ commit , rootState },filtroProducto ){
+          try {
+
+            const headers = {
+              'token': rootState.Usuario.Token
+            };
+
+            const response = await axios.post(
+              baseProductoUrl + "obtenerProductosLikeNombre"
+              ,
+              {
+                IdSucursal : rootState.Usuario.Sucursal.IdSucursal,
+                NombreProducto: filtroProducto
+              },
+              {
+                headers
+              }
+            );
+            console.log(response.data.data)
+            commit("OBTENER_PRODUCTOS", response.data.data);
+          } catch (error) {
+            console.log(error.response);
+          }
+        },
     },
     mutations : {
         OBTENER_PRODUCTOS(state , data){

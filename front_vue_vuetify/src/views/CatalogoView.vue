@@ -4,37 +4,43 @@
                 :loading="loading"
                 density="compact"
                 variant="solo"
-                label="Search templates"
+                label="Buscar productos"
                 append-inner-icon="mdi-magnify"
                 single-line
                 hide-details
-                @click:append-inner="onClick"
+                v-model="filtroProducto"
+                @click:append-inner="filtrarProductos"
             ></v-text-field>
+            <div class="d-flex flex-row flex-wrap">             
+              <div v-for="producto in ListaProductos" 
+                    :key="producto.IdProducto" 
+                    >
+                <CardProducts  :itemProducto="producto" />
+              </div>
+            </div>
 
-             <v-row class="pl-2 pr-2">
-                <CardProducts />
-                <CardProducts />
-                <CardProducts />
-                <CardProducts />
-                <CardProducts />
-                <CardProducts />
-            </v-row>
     </v-container>    
    
 </template>
 <script>
 import CardProducts from '@/components/CardProducts.vue'
+import { mapActions, mapState } from 'vuex'
+
 export default {
     components : { 
         CardProducts 
         },
     data () {
       return {
+        filtroProducto : "",
         loaded: false,
         loading: false,
       }
     },
+    computed:{
+      ...mapState('producto',['ListaProductos']),    },
     methods: {
+      ...mapActions('producto',['obtenerProductos','obtenerProductosLike']),
       onClick () {
         this.loading = true
         setTimeout(() => {
@@ -42,6 +48,13 @@ export default {
           this.loaded = true
         }, 2000)
       },
+      async filtrarProductos(){
+        await this.obtenerProductosLike(this.filtroProducto)
+        console.log(this.ListaProductos)
+      }
     },
+    async beforeMount(){
+      await this.obtenerProductos()
+    }  
 }
 </script>

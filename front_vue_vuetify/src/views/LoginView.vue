@@ -37,7 +37,8 @@
                         item-value="value"
                         ></v-select>
 
-                        <v-btn type="submit"  
+                        <v-btn type="submit" 
+                        color="deep-purple" 
                         block class="mt-2">Ingresar</v-btn>
                     </v-form>
                  </v-sheet>
@@ -49,7 +50,7 @@
 </template>
 <script>
 import { mapActions, mapState } from 'vuex'
-
+import Swal from 'sweetalert2'
 
 export default {
     data () {
@@ -64,7 +65,7 @@ export default {
       }
     } ,
     methods : {
-        ...mapActions(['loginUsuario']),
+        ...mapActions(['loginUsuario','limpiarMsgError']),
         ...mapActions('sucursal',['obtenerSucursales']),
 
          async logearUsuario(){             
@@ -80,11 +81,19 @@ export default {
                     this.$router.push('/home')
                  }   
              }
+
+             if(this.MsgError != ""){
+                Swal.fire({
+                icon: 'error',
+                text: `${this.MsgError}`,
+                })
+                await this.limpiarMsgError();
+             }
          },
         
     },
     computed: {
-        ...mapState({ UsuarioLogin : 'Usuario'}),
+        ...mapState({ UsuarioLogin : 'Usuario' , MsgError:"MensajeError"}),
         ...mapState( 'sucursal', ['ListaSucursales'])    
     },
     async beforeMount(){
