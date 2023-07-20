@@ -5,7 +5,9 @@ const PermisoStore = {
     namespaced: true,
     state : () => ({
       exitoCambioAdmin : false,
-      exitoCambioVendedor : false
+      exitoCambioVendedor : false,
+      listaMenuRolAdmin : [],
+      listaMenuRolVendedor : []
     }),
     actions : {       
         async EditarCambioMenuEstAdmin({ commit , rootState  },DatosCambioMenuEstAdmin){
@@ -54,6 +56,50 @@ const PermisoStore = {
             console.log(error.response);
           }
         },
+        async obtenerMenuRolAdmin({ commit , rootState }){
+          try {
+            const headers = {
+                'token': rootState.Usuario.Token
+              };
+
+            const response = await axios.post(
+                "/menu/obtenerMenusRol"
+              ,
+              {
+                IdRol : 2
+              }
+              ,
+              {
+                headers
+              }
+            );
+            commit("OBTENER_MENU_ROL_ADMIN", response.data.data);
+          } catch (error) {
+            console.log(error.response);
+          }
+        },
+        async obtenerMenuRolVendedor({ commit , rootState }){
+          try {
+            const headers = {
+                'token': rootState.Usuario.Token
+              };
+
+            const response = await axios.post(
+                "/menu/obtenerMenusRol"
+              ,
+              {
+                IdRol : 1
+              }
+              ,
+              {
+                headers
+              }
+            );
+            commit("OBTENER_MENU_ROL_VENDEDOR", response.data.data);
+          } catch (error) {
+            console.log(error.response);
+          }
+        },
     },
     mutations : {
       CAMBIAR_ESTADO_ADMIN(state){
@@ -61,6 +107,12 @@ const PermisoStore = {
       },
       CAMBIAR_ESTADO_VENDEDOR(state){
         state.exitoCambioVendedor = true;
+      },
+      OBTENER_MENU_ROL_ADMIN(state , data){
+        state.listaMenuRolAdmin = data
+      },
+      OBTENER_MENU_ROL_VENDEDOR(state , data){
+        state.listaMenuRolVendedor = data
       }
     },
 }

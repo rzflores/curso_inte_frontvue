@@ -113,12 +113,16 @@ import Swal from 'sweetalert2'
       }
     }),
     computed:{
-      ...mapState('menurol',['ListaMenuRol']),
-      ...mapState('permisos',['exitoCambioAdmin','exitoCambioVendedor'])
+      ...mapState('permisos',['exitoCambioAdmin',
+                              'exitoCambioVendedor',
+                              'listaMenuRolAdmin',
+                              'listaMenuRolVendedor'])
     },
     methods:{
-      ...mapActions('menurol',['obtenerMenuRol','limpiarMenuRol']),
-      ...mapActions('permisos',['EditarCambioMenuEstAdmin','EditarCambioMenuEstVendedor']),
+      ...mapActions('permisos',['EditarCambioMenuEstAdmin',
+                                'EditarCambioMenuEstVendedor',
+                                'obtenerMenuRolAdmin',
+                                'obtenerMenuRolVendedor']),
       
       async realizarCambioMenuEstAdmin(){
         
@@ -140,7 +144,6 @@ import Swal from 'sweetalert2'
       async realizarCambioMenuEstVendedor(){
 
         await this.EditarCambioMenuEstVendedor(this.DatosCambioMenuEstVendedor);
-        console.log('ejectadooooo vendedor')
         console.log(this.exitoCambioVendedor)
         if(this.exitoCambioVendedor ){
           this.DatosCambioMenuEstVendedor.listaCambioMenuEstVendedor = []
@@ -174,10 +177,11 @@ import Swal from 'sweetalert2'
         }
     },
     async beforeMount(){
-      await this.obtenerMenuRol(2);
-      this.ListaMenusAdmin = this.ListaMenuRol
-      await this.obtenerMenuRol(1);
-      this.ListaMenusVendedor = this.ListaMenuRol
+      await this.obtenerMenuRolAdmin();
+      await this.obtenerMenuRolVendedor();
+      this.ListaMenusAdmin = this.listaMenuRolAdmin 
+      this.ListaMenusVendedor = this.listaMenuRolVendedor
+    
     }
   }
   
