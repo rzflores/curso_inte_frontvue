@@ -1,6 +1,5 @@
 import axios from "axios"
 
-let baseMenuUrl = 'http://localhost:4000/menu/'
 const MenuStore = {
     namespaced: true,
     state : () => ({
@@ -14,7 +13,7 @@ const MenuStore = {
               };
 
             const response = await axios.post(
-                baseMenuUrl+"obtenerMenusRol"
+                "/menu/obtenerMenusRol"
               ,
               {
                 IdRol 
@@ -36,7 +35,7 @@ const MenuStore = {
               };
 
             const response = await axios.post(
-                baseMenuUrl+"obtenerMenusRol"
+               "/menu/obtenerMenusRol"
               ,
               {
                 IdRol 

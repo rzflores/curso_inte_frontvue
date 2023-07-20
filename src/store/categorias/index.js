@@ -1,19 +1,19 @@
 import axios from "axios"
 
-const UnidadMedidaStore = {
+const CategoriaStore = {
     namespaced: true,
     state : () => ({
-        ListaUnidadMedida : [],        
+        ListaCategorias : [],        
     }),
     actions : {       
-        async obtenerUnidadMedidas({ commit , rootState }){
+        async obtenerCategorias({ commit , rootState }){
           try {
             const headers = {
                 'token': rootState.Usuario.Token
               };
 
             const response = await axios.post(
-              "http://localhost:4000/unidadMedidas/obtenerUnidadMedidas"
+              "/categoria/obtenerCategorias"
               ,
               {}
               ,
@@ -21,7 +21,7 @@ const UnidadMedidaStore = {
                 headers
               }
             );
-            commit("OBTENER_UNIDADMEDIDAS", response.data.data);
+            commit("OBTENER_CATEGORIAS", response.data.data);
           } catch (error) {
             console.log(error.response);
           }
@@ -31,10 +31,10 @@ const UnidadMedidaStore = {
      
     },
     mutations : {
-        OBTENER_UNIDADMEDIDAS(state , data){
-          state.ListaUnidadMedida = data
+        OBTENER_CATEGORIAS(state , data){
+          state.ListaCategorias = data
         },
       },
 }
 
-export default UnidadMedidaStore;
+export default CategoriaStore;

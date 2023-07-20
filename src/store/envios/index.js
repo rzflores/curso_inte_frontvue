@@ -14,7 +14,7 @@ const EnvioStore = {
             };
 
             const response = await axios.post(
-              "http://localhost:4000/envio/realizarEnvio"
+              "/envio/realizarEnvio"
               ,{
                 FechaSalida: datosEnvio.fechaSalida,
                 FechaLlegada: datosEnvio.fechaLlegada,

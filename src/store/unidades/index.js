@@ -1,19 +1,19 @@
 import axios from "axios"
 
-const RolStore = {
+const UnidadMedidaStore = {
     namespaced: true,
     state : () => ({
-        ListaRoles : [],        
+        ListaUnidadMedida : [],        
     }),
     actions : {       
-        async obtenerRoles({ commit , rootState }){
+        async obtenerUnidadMedidas({ commit , rootState }){
           try {
             const headers = {
                 'token': rootState.Usuario.Token
               };
 
             const response = await axios.post(
-              "http://localhost:4000/rol/obtenerRoles"
+              "/unidadMedidas/obtenerUnidadMedidas"
               ,
               {}
               ,
@@ -21,7 +21,7 @@ const RolStore = {
                 headers
               }
             );
-            commit("OBTENER_ROLES", response.data.data);
+            commit("OBTENER_UNIDADMEDIDAS", response.data.data);
           } catch (error) {
             console.log(error.response);
           }
@@ -31,10 +31,10 @@ const RolStore = {
      
     },
     mutations : {
-        OBTENER_ROLES(state , data){
-          state.ListaRoles = data
+        OBTENER_UNIDADMEDIDAS(state , data){
+          state.ListaUnidadMedida = data
         },
       },
 }
 
-export default RolStore;
+export default UnidadMedidaStore;

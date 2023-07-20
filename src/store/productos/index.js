@@ -1,6 +1,5 @@
 import axios from "axios"
 
-let baseProductoUrl = 'http://localhost:4000/producto/'
 
 const ProductoStore = {
     namespaced: true,
@@ -18,7 +17,7 @@ const ProductoStore = {
 
             console.log(rootState.Usuario.Sucursal.IdSucursal)
             const response = await axios.post(
-              baseProductoUrl + "obtenerProductos"
+              "/producto/obtenerProductos"
               ,
               {
                 IdSucursal : rootState.Usuario.Sucursal.IdSucursal
@@ -39,7 +38,7 @@ const ProductoStore = {
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              baseProductoUrl + "obtenerProducto"
+              "/producto/obtenerProducto"
             ,{
               IdProducto 
             },{
@@ -58,7 +57,7 @@ const ProductoStore = {
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              baseProductoUrl +"registrarProducto",
+              "/producto/registrarProducto",
               { 
                 NombreProducto: producto.NombreProducto,
                 DescripcionCorta: producto.DescripcionCorta,
@@ -87,7 +86,7 @@ const ProductoStore = {
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              baseProductoUrl + "editarProducto",
+              "/producto/editarProducto",
               { 
                 IdProducto : producto.IdProducto,
                 NombreProducto: producto.NombreProducto,
@@ -118,7 +117,7 @@ const ProductoStore = {
             };
 
             const response = await axios.post(
-              baseProductoUrl + "obtenerProductosLikeNombre"
+              "/producto/obtenerProductosLikeNombre"
               ,
               {
                 IdSucursal : rootState.Usuario.Sucursal.IdSucursal,

@@ -15,7 +15,7 @@ const PermisoStore = {
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              "http://localhost:4000/menu/cambiarEstadoMenus"
+              "/menu/cambiarEstadoMenus"
             ,{
               IdRol : DatosCambioMenuEstAdmin.idRol,
               ListaMenus : DatosCambioMenuEstAdmin.listaCambioMenuEstAdmin
@@ -39,7 +39,7 @@ const PermisoStore = {
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              "http://localhost:4000/menu/cambiarEstadoMenus"
+              "/menu/cambiarEstadoMenus"
             ,{
               IdRol : DatosCambioMenuEstVendedor.idRol,
               ListaMenus : DatosCambioMenuEstVendedor.listaCambioMenuEstVendedor

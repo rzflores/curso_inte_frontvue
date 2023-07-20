@@ -1,8 +1,5 @@
 import axios from "axios"
 
-let baseUsuarioUrl = 'http://localhost:4000/usuario/';
-
-
 const UsuarioStore = {
     namespaced: true,
     state : () => ({
@@ -16,7 +13,7 @@ const UsuarioStore = {
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              baseUsuarioUrl + "obtenerUsuarios"
+              "/usuario/obtenerUsuarios"
               ,{}
               ,{ 
                 headers 
@@ -34,7 +31,7 @@ const UsuarioStore = {
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              baseUsuarioUrl+"obtenerUsuario"
+              "/usuario/obtenerUsuario"
             ,{
               IdUsuario 
             },{
@@ -54,7 +51,7 @@ const UsuarioStore = {
             };
             
             const response = await axios.post(
-              baseUsuarioUrl + "registrarUsuario",
+              "/usuario/registrarUsuario",
               { 
                 Nombres: usuario.Nombres,
                 Apellidos: usuario.Apellidos,
@@ -81,7 +78,7 @@ const UsuarioStore = {
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              baseUsuarioUrl + "editarUsuario",
+              "/usuario/editarUsuario",
               { 
                 IdUsuario : usuario.IdUsuario,
                 Nombres: usuario.Nombres,

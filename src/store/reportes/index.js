@@ -14,7 +14,7 @@ const ReporteStore = {
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              "http://localhost:4000/reporte/obtenerReporteStock"
+              "/reporte/obtenerReporteStock"
               ,{
                 Nombre : filtroStock.Nombre,
                 Descripcion : filtroStock.Descripcion,
@@ -35,7 +35,7 @@ const ReporteStore = {
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              "http://localhost:4000/reporte/obtenerReporteVencimiento"
+              "/reporte/obtenerReporteVencimiento"
             ,{
               Nombre : filtroVencimiento.Nombre,
               Descripcion: filtroVencimiento.Descripcion,

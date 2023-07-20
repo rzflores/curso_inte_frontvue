@@ -8,7 +8,10 @@ import { createApp } from 'vue'
 import { registerPlugins } from '@/plugins'
 import store from './store/store'
 
+import axios from 'axios';
 
+// Configurar la base URL de Axios
+axios.defaults.baseURL = 'http://146.190.115.207:6000';
 
 const app = createApp(App)
 app.use(store)

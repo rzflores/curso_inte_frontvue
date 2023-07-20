@@ -1,8 +1,5 @@
 import axios from "axios"
 
-
-let baseSucursalUrl = 'http://localhost:4000/sucursal/';
-
 const SucursalStore = {
     namespaced: true,
     state : () => ({
@@ -12,8 +9,17 @@ const SucursalStore = {
     actions : {       
         async obtenerSucursales({ commit }){
           try {
+            let headers = {
+              'Access-Control-Allow-Origin': '*'
+            }
             const response = await axios.post(
-              baseSucursalUrl + "obtenerSucursales"
+               "/sucursal/obtenerSucursales",
+               {
+
+               },
+               { 
+                headers
+              }
             );
             commit("OBTENER_SUCURSALES", response.data.data);
           } catch (error) {
@@ -27,7 +33,7 @@ const SucursalStore = {
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              baseSucursalUrl+"obtenerSucursal"
+              "/sucursal/obtenerSucursal"
             ,{
               idSucursal : IdSucursal
             },{
@@ -46,7 +52,7 @@ const SucursalStore = {
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              baseSucursalUrl+"registrarSucursal",
+              "/sucursal/registrarSucursal",
               { 
                 Nombre: sucursal.Nombre,
                 CelularSucursal: sucursal.CelularSucursal,
@@ -69,7 +75,7 @@ const SucursalStore = {
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              baseSucursalUrl+"editarSurcursal",
+              "/sucursal/editarSurcursal",
               { 
                 IdSucursal : sucursal.IdSucursal,
                 Nombre: sucursal.Nombre,

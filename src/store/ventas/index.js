@@ -14,7 +14,7 @@ const VentaStore = {
           };
 
           const response = await axios.post(
-            "http://localhost:4000/venta/realizarVenta"
+            "/venta/realizarVenta"
             ,{
               TotalVenta: datosVenta.totalVenta,
               FechaVenta: datosVenta.fechaVenta,

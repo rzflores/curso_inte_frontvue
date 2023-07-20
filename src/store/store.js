@@ -25,7 +25,7 @@ const store = createStore({
         async loginUsuario({ commit } , usuario) {
             try {
               const response = await axios.post(
-                "http://localhost:4000/auth/login",
+                "/auth/login",
                 { 
                   NombreUsuario : usuario.NombreUsuario ,
                   Contrasenia : usuario.Contrasenia ,

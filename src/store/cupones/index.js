@@ -15,7 +15,7 @@ const CuponStore = {
               };
 
             const response = await axios.post(
-              "http://localhost:4000/cupon/obtenerCupones"
+              "/cupon/obtenerCupones"
               ,
               {}
               ,
@@ -35,7 +35,7 @@ const CuponStore = {
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              "http://localhost:4000/cupon/obtenerCupon"
+              "/cupon/obtenerCupon"
             ,{
                 IdCupon
             },{
@@ -54,7 +54,7 @@ const CuponStore = {
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              "http://localhost:4000/cupon/registrarCupon",
+              "/cupon/registrarCupon",
               { 
                 Codigo: cupon.Codigo,
                 PorcentajeDescuento: cupon.PorcentajeDescuento,
@@ -77,7 +77,7 @@ const CuponStore = {
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              "http://localhost:4000/cupon/editarCupon",
+              "/cupon/editarCupon",
               { 
                 IdCupon : cupon.IdCupon,
                 Codigo: cupon.Codigo,
@@ -101,7 +101,7 @@ const CuponStore = {
               'token': rootState.Usuario.Token
             };
             const response = await axios.post(
-              "http://localhost:4000/cupon/verificarCupon"
+              "/cupon/verificarCupon"
             ,{
               CodigoCupon : codigoCupon
             },{

@@ -1,19 +1,19 @@
 import axios from "axios"
 
-const CategoriaStore = {
+const RolStore = {
     namespaced: true,
     state : () => ({
-        ListaCategorias : [],        
+        ListaRoles : [],        
     }),
     actions : {       
-        async obtenerCategorias({ commit , rootState }){
+        async obtenerRoles({ commit , rootState }){
           try {
             const headers = {
                 'token': rootState.Usuario.Token
               };
 
             const response = await axios.post(
-              "http://localhost:4000/categoria/obtenerCategorias"
+              "/rol/obtenerRoles"
               ,
               {}
               ,
@@ -21,7 +21,7 @@ const CategoriaStore = {
                 headers
               }
             );
-            commit("OBTENER_CATEGORIAS", response.data.data);
+            commit("OBTENER_ROLES", response.data.data);
           } catch (error) {
             console.log(error.response);
           }
@@ -31,10 +31,10 @@ const CategoriaStore = {
      
     },
     mutations : {
-        OBTENER_CATEGORIAS(state , data){
-          state.ListaCategorias = data
+        OBTENER_ROLES(state , data){
+          state.ListaRoles = data
         },
       },
 }
 
-export default CategoriaStore;
+export default RolStore;
