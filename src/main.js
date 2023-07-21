@@ -11,7 +11,7 @@ import store from './store/store'
 import axios from 'axios';
 
 // Configurar la base URL de Axios
-axios.defaults.baseURL = 'http://146.190.115.207';
+axios.defaults.baseURL = 'http://localhost:4040';
 
 const app = createApp(App)
 app.use(store)
